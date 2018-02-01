@@ -6,6 +6,8 @@ from enum import Enum
 import random
 import numpy as np
 
+# This is a test.
+
 class ClickHandlerMode(Enum):
     FIRST_CLICK = 0
     SECOND_CLICK = 1
