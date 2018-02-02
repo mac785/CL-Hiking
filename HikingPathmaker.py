@@ -1,12 +1,10 @@
 import cv2
-# import tkinter
 from copy import deepcopy
 from tkinter import filedialog
 from enum import Enum
 import random
 import numpy as np
-
-#Test line
+import heapq
 
 class ClickHandlerMode(Enum):
     FIRST_CLICK = 0
@@ -300,8 +298,31 @@ class Pathmaker():
         # TODO: You need to write the rest of this method.
         # consider what you need to do before you loop through the search cycle.
 
+        # Jiminotes: set startpoint's cost to zero, add [fstart,startpoint] to frontier. F is cost to get to current point + heuristic for current point.
+        self.record[start_point_r_c[0],start_point_r_c[1],0] = 0
+        # frontier.append([heuristic(start_point_r_c),start_point_r_c])
+        heappush(frontier, [heuristic(start_point_r_c),start_point_r_c])
 
         # loop while there are still elements in frontier.
+        draw = 0
+        while ln(frontier) != 0:
+            if draw = 5:
+                draw_heat_map()
+                display_path()
+                draw = 0
+            # frontier.sort()
+            # f, pt = frontier[0]
+            # del(frontier[0])
+            heapify(frontier)
+            f, pt = heappop(frontier)
+            if pt = end_point_r_c:
+                break
+            neighbors = get_unvisited_neighbors(pt)
+            for i in neighbors:
+                if f +
+
+
+            draw++
 
         # # optional - if you are using the list as a priority queue, you might find this code helpful.
         # # this is the equivalent of popping from a minheap priority queue.... sorted by the first value in the list.
