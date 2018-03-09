@@ -4,7 +4,6 @@ from tkinter import filedialog
 from enum import Enum
 import random
 import numpy as np
-import heapq
 
 class ClickHandlerMode(Enum):
     FIRST_CLICK = 0
@@ -12,7 +11,7 @@ class ClickHandlerMode(Enum):
     SEARCHING = 2
     DONE = 3
 
-ALPHA = 1.0  # play with this number to decide how important the altitude data is!
+ALPHA = 100.0  # play with this number to decide how important the altitude data is!
 
 class Pathmaker():
     def __init__(self):
@@ -60,7 +59,6 @@ class Pathmaker():
 
     def get_height_at(self,point):
         """
-
         Note: I've written this convenience method to illustrate the conversion
         from 0-255 to 0.0 to 1.0.
         :param point: a location in (r,c) format.
@@ -190,7 +188,11 @@ class Pathmaker():
         # -----------------------------------------
         # TODO: You should write this method
 
-
+        path_location = path_terminator
+        while(path_location[0] != self.start_point_r_c[0]):
+            self.set_color_at(color, path_location)
+            path_location = [int(self.record[path_location[0],path_location[1],[1]]), int(self.record[path_location[0],path_location[1],[2]])]
+        self.set_color_at(color, path_location)
 
         # -----------------------------------------
 
@@ -221,8 +223,14 @@ class Pathmaker():
         #------------------------------------------
         # TODO: You should write this method
         # I recommend using the euclidean or manhattan distance from point to self.end_point_r_c.
+        # print("--------")
+        # print(point[0])
+        # print(self.end_point_r_c[0])
+        # print(point[1])
+        # print(self.end_point_r_c[1])
+        # print("--------")
 
-        np.sqrt((pow(point[0]-self.end_point_r_c[0],2))+(pow(point[1]-self.end_point_r_c[1],2)))
+        result = np.sqrt((pow(point[0]-self.end_point_r_c[0],2))+(pow(point[1]-self.end_point_r_c[1],2)))
 
         #------------------------------------------
         return result
@@ -298,24 +306,55 @@ class Pathmaker():
         # TODO: You need to write the rest of this method.
         # consider what you need to do before you loop through the search cycle.
 
-        self.record[start_point_r_c[0],start_point_r_c[1],0] = 0
-        heappush(frontier, [0+heuristic(start_point_r_c),start_point_r_c])
+        self.record[start[0],start[1],0] = 0
+        frontier.append([0+self.heuristic(start), start])
 
         # loop while there are still elements in frontier.
-        draw = 0
-        while ln(frontier) != 0:
-            if draw == 5:
-                draw_heat_map()
-                display_path()
-                draw = 0
-            heapify(frontier)
-            f, pt = heappop(frontier)
-            if pt == end_point_r_c:
+        # draw = 0
+        lap = 0
+        while len(frontier) != 0:
+            lap += 1
+            frontier.sort()
+            f, pt = frontier.pop(0)
+            if len(self.visited) % 100 == 0:
+                self.display_path(pt,(random.randint(64,255),random.randint(64,255),random.randint(64,255)))
+                cv2.imshow("Map", self.drawing_map)
+                self.draw_heat_map()
+            if pt == end:
+                print("Made it to the end in lap:")
+                print(lap)
+                return pt
                 break
-            neighbors = get_unvisited_neighbors(pt)
+            neighbors = self.get_unvisited_neighbors(pt)
             for i in neighbors:
-                
-            draw++
+                # print("Inside neighbor loop")
+                # calculate gp2 = gpt + cost
+                # I think I want to change pt[0] and pt[1] in the line below to be i[0] or some permutation of that
+                # print(self.cost(pt,i[0]))
+                newG = self.record[pt[0],pt[1],0] + self.cost(pt,i[0])
+                # if gpt2 is better than record's g @ pt2, path_terminator
+                # print("New G")
+                # print (newG)
+                # print("Record")
+                # print(self.record[i[0][0],i[0][1],0])
+                if(newG < self.record[i[0][0],i[0][1],0]):
+                    # print("Inside If statement")
+                    # update record with better value pt
+                    self.record[i[0][0]][i[0][1]][1] = pt[0]
+                    self.record[i[0][0]][i[0][1]][2] = pt[1]
+                    self.record[i[0][0]][i[0][1]][0] = newG
+                    # calculate hpt2
+                    # print(self.heuristic(i[0]))
+                    newH = self.heuristic(i[0])
+                    # calculate fpt2 = hpt2 + gpt2
+                    newF = newG + newH
+                    # add or update frontier with (fpt2, pt2)
+                    # print("Frontier Before")
+                    # print(frontier)
+                    frontier.append([newF, i[0]])
+                    # print("Frontier After")
+                    # print(frontier)
+            # print(frontier)
 
         # # optional - if you are using the list as a priority queue, you might find this code helpful.
         # # this is the equivalent of popping from a minheap priority queue.... sorted by the first value in the list.
@@ -326,8 +365,8 @@ class Pathmaker():
         # # ---------------------
 
 
-        # # optional... every few (100?) loops, draw the path that lead to pt and update a "heat map" that shows what
-        # #  self.record looks like. You might find this interesting to observe what is going on as the computer works.
+        # optional... every few (100?) loops, draw the path that lead to pt and update a "heat map" that shows what
+        #  self.record looks like. You might find this interesting to observe what is going on as the computer works.
         # if len(self.visited) % 100 == 0:
         #     self.display_path(pt,(random.randint(64,255),random.randint(64,255),random.randint(64,255)))
         #     cv2.imshow("Map", self.drawing_map)
