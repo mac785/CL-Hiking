@@ -1,3 +1,10 @@
+"""
+Jamie's Notes. Current problems:
+the G formula isn't grabbing from the past point, but the cuurent point.
+Initial setup was done in [distance,point] format, but after break I accidentally went to [point,distance].
+"""
+
+
 import cv2
 from copy import deepcopy
 from tkinter import filedialog
@@ -60,7 +67,6 @@ class Pathmaker():
 
     def get_height_at(self,point):
         """
-
         Note: I've written this convenience method to illustrate the conversion
         from 0-255 to 0.0 to 1.0.
         :param point: a location in (r,c) format.
@@ -190,7 +196,12 @@ class Pathmaker():
         # -----------------------------------------
         # TODO: You should write this method
 
+        # The way I did it in the transit project:
+        # for i in range(0,len(path)-1):
+        #     self.draw_edge(self.current_map,path[i],path[i+1],[255,0,0])
+        # cv2.imshow("Map", np.repeat(np.repeat(self.current_map, 2, axis=0), 2, axis=1))
 
+        # while(self.record[path_terminator[0],path_terminator[1],])
 
         # -----------------------------------------
 
@@ -221,6 +232,12 @@ class Pathmaker():
         #------------------------------------------
         # TODO: You should write this method
         # I recommend using the euclidean or manhattan distance from point to self.end_point_r_c.
+        # print("--------")
+        # print(point[0])
+        # print(self.end_point_r_c[0])
+        # print(point[1])
+        # print(self.end_point_r_c[1])
+        # print("--------")
 
         np.sqrt((pow(point[0]-self.end_point_r_c[0],2))+(pow(point[1]-self.end_point_r_c[1],2)))
 
@@ -298,24 +315,52 @@ class Pathmaker():
         # TODO: You need to write the rest of this method.
         # consider what you need to do before you loop through the search cycle.
 
-        self.record[start_point_r_c[0],start_point_r_c[1],0] = 0
-        heappush(frontier, [0+heuristic(start_point_r_c),start_point_r_c])
+        self.record[start[0],start[1],0] = 0
+        heapq.heappush(frontier, [start, 0+self.heuristic(start)])
+
 
         # loop while there are still elements in frontier.
-        draw = 0
-        while ln(frontier) != 0:
-            if draw == 5:
-                draw_heat_map()
-                display_path()
-                draw = 0
-            heapify(frontier)
-            f, pt = heappop(frontier)
-            if pt == end_point_r_c:
+        # draw = 0
+        lap = 0
+        while len(frontier) != 0:
+            print("Lap")
+            print(lap)
+            lap += 1
+            # if draw == 5:
+            #     draw_heat_map()
+            #     display_path()
+            #     draw = 0
+            heapq.heapify(frontier)
+            pt, f = heapq.heappop(frontier)
+            if pt == end:
                 break
-            neighbors = get_unvisited_neighbors(pt)
+            neighbors = self.get_unvisited_neighbors(pt)
             for i in neighbors:
-                
-            draw++
+                print("Inside neighbor loop")
+                # calculate gp2 = gpt + cost
+                newG = self.record[pt[0],pt[1],0] + self.cost(pt,i[0])
+                # if gpt2 is better than record's g @ pt2, path_terminator
+                print("New G")
+                print (newG)
+                print("Record")
+                print(self.record[i[0][0],i[0][1],0])
+                if(newG < self.record[i[0][0],i[0][1],0]):
+                    print("Inside If statement")
+                    # update record with better value pt
+                    self.record[i[0][0]][i[0][1]][1] = pt[0]
+                    self.record[i[0][0]][i[0][1]][2] = pt[1]
+                    # calculate hpt2
+                    newH = self.heuristic(i[0])
+                    # calculate fpt2 = hpt2 + gpt2
+                    newF = newG + newH
+                    # add or update frontier with (fpt2, pt2)
+                    print("Frontier Before")
+                    print(frontier)
+                    heapq.heappush(frontier, [i[0], newF])
+                    print("Frontier After")
+                    print(frontier)
+            # draw += 1
+        print(frontier)
 
         # # optional - if you are using the list as a priority queue, you might find this code helpful.
         # # this is the equivalent of popping from a minheap priority queue.... sorted by the first value in the list.
