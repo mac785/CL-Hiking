@@ -1,3 +1,10 @@
+"""
+Jamie's Notes. Current problems:
+the G formula isn't grabbing from the past point, but the cuurent point.
+Initial setup was done in [distance,point] format, but after break I accidentally went to [point,distance].
+"""
+
+
 import cv2
 from copy import deepcopy
 from tkinter import filedialog
@@ -187,12 +194,17 @@ class Pathmaker():
         """
         # -----------------------------------------
         # TODO: You should write this method
-
         path_location = path_terminator
         while(path_location[0] != self.start_point_r_c[0]):
             self.set_color_at(color, path_location)
             path_location = [int(self.record[path_location[0],path_location[1],[1]]), int(self.record[path_location[0],path_location[1],[2]])]
         self.set_color_at(color, path_location)
+        # The way I did it in the transit project:
+        # for i in range(0,len(path)-1):
+        #     self.draw_edge(self.current_map,path[i],path[i+1],[255,0,0])
+        # cv2.imshow("Map", np.repeat(np.repeat(self.current_map, 2, axis=0), 2, axis=1))
+
+        # while(self.record[path_terminator[0],path_terminator[1],])
 
         # -----------------------------------------
 
@@ -308,7 +320,6 @@ class Pathmaker():
 
         self.record[start[0],start[1],0] = 0
         frontier.append([0+self.heuristic(start), start])
-
         # loop while there are still elements in frontier.
         # draw = 0
         lap = 0
@@ -364,7 +375,6 @@ class Pathmaker():
         # del (frontier[0])
         # # ---------------------
 
-
         # optional... every few (100?) loops, draw the path that lead to pt and update a "heat map" that shows what
         #  self.record looks like. You might find this interesting to observe what is going on as the computer works.
         # if len(self.visited) % 100 == 0:
@@ -372,11 +382,6 @@ class Pathmaker():
         #     cv2.imshow("Map", self.drawing_map)
         #
         #     self.draw_heat_map()
-
-
-
-
-
 
         # ------------------------------------------
         return None
