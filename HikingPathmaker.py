@@ -1,10 +1,3 @@
-"""
-Jamie's Notes. Current problems:
-the G formula isn't grabbing from the past point, but the cuurent point.
-Initial setup was done in [distance,point] format, but after break I accidentally went to [point,distance].
-"""
-
-
 import cv2
 from copy import deepcopy
 from tkinter import filedialog
@@ -194,30 +187,17 @@ class Pathmaker():
         """
         # -----------------------------------------
         # TODO: You should write this method
-<<<<<<< HEAD
-=======
-
-<<<<<<< HEAD
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
         path_location = path_terminator
         while(path_location[0] != self.start_point_r_c[0]):
             self.set_color_at(color, path_location)
             path_location = [int(self.record[path_location[0],path_location[1],[1]]), int(self.record[path_location[0],path_location[1],[2]])]
         self.set_color_at(color, path_location)
-<<<<<<< HEAD
-=======
-=======
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
         # The way I did it in the transit project:
         # for i in range(0,len(path)-1):
         #     self.draw_edge(self.current_map,path[i],path[i+1],[255,0,0])
         # cv2.imshow("Map", np.repeat(np.repeat(self.current_map, 2, axis=0), 2, axis=1))
 
         # while(self.record[path_terminator[0],path_terminator[1],])
-<<<<<<< HEAD
-=======
->>>>>>> 63dcc760878bc613b179e53036065e860fe35fb0
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
 
         # -----------------------------------------
 
@@ -332,25 +312,12 @@ class Pathmaker():
         # consider what you need to do before you loop through the search cycle.
 
         self.record[start[0],start[1],0] = 0
-<<<<<<< HEAD
         frontier.append([0+self.heuristic(start), start])
-=======
-<<<<<<< HEAD
-        frontier.append([0+self.heuristic(start), start])
-=======
-        heapq.heappush(frontier, [start, 0+self.heuristic(start)])
 
->>>>>>> 63dcc760878bc613b179e53036065e860fe35fb0
-
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
         # loop while there are still elements in frontier.
         # draw = 0
         lap = 0
         while len(frontier) != 0:
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
             lap += 1
             frontier.sort()
             f, pt = frontier.pop(0)
@@ -383,64 +350,16 @@ class Pathmaker():
                     self.record[i[0][0]][i[0][1]][0] = newG
                     # calculate hpt2
                     # print(self.heuristic(i[0]))
-<<<<<<< HEAD
-=======
-=======
-            print("Lap")
-            print(lap)
-            lap += 1
-            # if draw == 5:
-            #     draw_heat_map()
-            #     display_path()
-            #     draw = 0
-            heapq.heapify(frontier)
-            pt, f = heapq.heappop(frontier)
-            if pt == end:
-                break
-            neighbors = self.get_unvisited_neighbors(pt)
-            for i in neighbors:
-                print("Inside neighbor loop")
-                # calculate gp2 = gpt + cost
-                newG = self.record[pt[0],pt[1],0] + self.cost(pt,i[0])
-                # if gpt2 is better than record's g @ pt2, path_terminator
-                print("New G")
-                print (newG)
-                print("Record")
-                print(self.record[i[0][0],i[0][1],0])
-                if(newG < self.record[i[0][0],i[0][1],0]):
-                    print("Inside If statement")
-                    # update record with better value pt
-                    self.record[i[0][0]][i[0][1]][1] = pt[0]
-                    self.record[i[0][0]][i[0][1]][2] = pt[1]
-                    # calculate hpt2
->>>>>>> 63dcc760878bc613b179e53036065e860fe35fb0
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
                     newH = self.heuristic(i[0])
                     # calculate fpt2 = hpt2 + gpt2
                     newF = newG + newH
                     # add or update frontier with (fpt2, pt2)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
                     # print("Frontier Before")
                     # print(frontier)
                     frontier.append([newF, i[0]])
                     # print("Frontier After")
                     # print(frontier)
             # print(frontier)
-<<<<<<< HEAD
-=======
-=======
-                    print("Frontier Before")
-                    print(frontier)
-                    heapq.heappush(frontier, [i[0], newF])
-                    print("Frontier After")
-                    print(frontier)
-            # draw += 1
-        print(frontier)
->>>>>>> 63dcc760878bc613b179e53036065e860fe35fb0
->>>>>>> f647a7283debd7d52f67c44d1f44ee8134b589a7
 
         # # optional - if you are using the list as a priority queue, you might find this code helpful.
         # # this is the equivalent of popping from a minheap priority queue.... sorted by the first value in the list.
